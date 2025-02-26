@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>practice</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="form-container">
+    
+        <form id="form">
+            <h3>Signup</h3>
+            <label>
+                <h4>username</h4>
+                <input id="signup-username" type="text">
+            </label>
+
+            <label>
+                <h4>password</h4>
+                <input id="signup-password" type="password">
+            </label> <br> <br>
+
+            <button id="signup-button">Signup</button>
+        </form>
+
+
+        <div class="already-account">
+            <h3>Already have an account<a href="signin.html"></a></h3>
+        </div>
+    </div>
+
+
+
+
+
+
+    <script>
+        var button = document.querySelector('#form');
+        button.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                var username = document.getElementById('signup-username').value
+                var password = document.getElementById('signup-password').value
+
+                console.log(username, password)
+
+                const requestOptions = {
+                    method: "POST",
+                    mode:"cors",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username, password: password })
+
+                };
+                var response = await fetch('http://localhost:3000/signup', requestOptions);
+                debugger;
+
+                var data = await response.json();
+                document.cookie = `AUTH_API=${data.token}`;
+                localStorage.setItem("AUTH_API", data.token);
+                console.log(data);
+            }
+            catch (err) {
+                console.error(err)
+            }
+
+        })
+
+    </script>
+
+
+
+</body>
+
+</html>
