@@ -26,16 +26,6 @@
             <button onclick="addTask()"> Add</button>
             <ul id="taskList"></ul>
             <div class="todo-container" id="todo-container">
-                <div class="todo-item">
-                    <div>Bring Milk</div>
-                    <button>Mark Done</button>
-                    <button>Delete</button>
-                </div>
-                <div class="todo-item">
-                    <div>Bring Milk</div>
-                    <button>Mark Done</button>
-                    <button>Delete</button>
-                </div>
 
             </div>
         </div>
@@ -61,6 +51,22 @@
             `
             document.getElementById('todo-container').insertAdjacentHTML('beforeend', htmlString);
         }
+
+        async function init() {
+            // todo: add request
+            // var data = fetch('http://localhost:5000/todo', requestObj)
+            var data = [
+                {title: 'Bring Milk', marked: true},
+                {title: 'Homework finished', marked: false}
+            ]
+
+            for(let i = 0; i < data.length; i++){
+                var todo = data[i]
+                addTodoItem(todo.title)
+            }
+        }
+
+        init();
     </script>
 
 </body>
