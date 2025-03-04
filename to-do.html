@@ -47,18 +47,19 @@
     <script>
         function addTask(){
             const taskInput=document.getElementById("taskInput");
+            addTodoItem(taskInput.value)
+        }
+
+        function addTodoItem(title) {
             const htmlString = `
                 <div class="todo-item">
-                    <div>${taskInput.value}</div>
+                    <div>${title}</div>
                     <button>Mark Done</button>
                     <button>Delete</button>
                 </div>
             `
             document.getElementById('todo-container').insertAdjacentHTML('beforeend', htmlString);
-            
-
         }
-        
     </script>
 
 </body>
