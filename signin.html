@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signin Page</title>
+</head>
+<body>
+
+    <div class="form-container">
+        <form id="form">
+            <h3>Signin</h3>
+            <label>
+                <h4>Username</h4>
+                <input id="signin-username" type="text">
+            </label>
+
+            <label>
+                <h4>Password</h4>
+                <input id="signin-password" type="password">
+
+            </label><br><br>
+
+            <button id="signin-button">Signin</button><br> <br>
+
+            <a href="index.html"><h3>Don't have a account</h3> </a>
+
+        </form>
+    </div>
+
+
+    <script>
+        var button=document.querySelector('#signin-button');
+        button.addEventListener('click',async(e)=>{
+            e.preventDefault();
+
+            try{
+                var username=document.getElementById('signin-username').value 
+                var password=document.getElementById('signin-password').value 
+
+                console.log(username,password)
+                debugger;
+
+                const requestOptions={
+                    method:"POST",
+                    mode:"cors",
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({username:username,password:password})
+                
+                };
+
+                var response=await fetch('http://localhost:3000/signin',requestOptions)
+
+                var data=await response.json();
+                if(data.err){
+                    alert(data.err);
+                }
+                else if(data.token){
+                    document.cookie = `AUTH_API=${data.token}`;
+                    localStorage.setItem("AUTH_API", data.token);
+                    console.log(data);
+                    window.location.href="/to-do.html";
+
+                }
+
+               
+
+                }
+
+                catch (err){
+                    console.error(err)
+                }
+
+            
+            }
+        )
+    </script>
+    
+
+</body>
+</html>

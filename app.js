@@ -1,54 +1,62 @@
-const express=require("express");
-const app=express();
-const port=3000;
-const cors=require("cors");
+const express = require("express");
+const app = express();
+const port = 3000;
+const cors = require("cors");
 app.use(cors());
 
-const prisma=require("./prisma/db")
+const prisma = require("./prisma/db")
 
 
-const crypto=require("crypto");
-const secret="mysecret";
+const crypto = require("crypto");
+const secret = "mysecret";
 
 
-const jwt=require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 
 app.use(express.json())
 
-app.get("/helloworld",(req,res)=>{
+app.get("/helloworld", (req, res) => {
     return res.send("hello world!")
 })
 
 
 
-app.post("/signup",async(req,res)=>{
-    const userdata=req.body
-    const dataInDb=await prisma.user.findFirst({where:{username:userdata.username}})
-    if(dataInDb){
-        return res.status(409).send({err: "username exists"})
+app.post("/signup", async (req, res) => {
+    try {
+        const userdata = req.body
+        const dataInDb = await prisma.user.findFirst({ where: { username: userdata.username } })
+        if (dataInDb) {
+            return res.status(409).send({ err: "username exists" })
+        }
+        else {
+
+            const newUser = await prisma.user.create({
+                data: {
+                    username: userdata.username,
+                    password: hashPass(userdata.password)
+
+                }
+
+
+            })
+
+            newUser.password == null;
+            const token = getjwt(newUser)
+            console.log(token)
+            return res.status(201).send({ token: token });
+
+
+
+
+        }
     }
-    else{
+    catch (err) {
+        console.log(err);
+        res.status(500).send();
 
-        const newUser=await prisma.user.create({
-            data:{
-                username:userdata.username,
-                password:hashPass(userdata.password)
-             
-            }
-
-
-        })
-
-        newUser.password==null;
-        const token=getjwt(newUser)
-        console.log(token)
-        return res.status(201).send({token:token})
-
-        
     }
 
-    
 
 
 })
@@ -65,21 +73,28 @@ app.post("/signin",async(req,res)=>{
             //return res.status(201).send("signed in")
         }
 
-        
+
     }
     return res.status(401).send("username or password not found")
 })
 
 
 
+app.get('/to-do', (req, res) => {
+    //res.send("welcome to to-do page")
+    res.redirect("/page")
+})
 
+app.get('/page', (req, res) => {
+    res.send("<h1>hye there from page</h1>")
+})
 
-app.listen(port,()=>{
+app.listen(port, () => {
     console.log(`app listening on port ${port}!`)
 })
 
 
-function hashPass(password){
+function hashPass(password) {
     const hash = crypto.createHmac('md5', secret) // Using HMAC with MD5 and a secret key
         .update(password) // Update with the data to hash
         .digest('hex'); // Output in hexadecimal format
@@ -89,9 +104,9 @@ function hashPass(password){
 
 function getjwt(user) {
     var token = jwt.sign({
-    
+
         exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
         data: user
-      }, secret);
-      return token;
+    }, secret);
+    return token;
 }
