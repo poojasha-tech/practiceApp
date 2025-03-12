@@ -54,7 +54,10 @@
             // todo: add request
             const requestOptions = {
                 method: "GET",
-                redirect: "follow"
+                redirect: "follow",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
+                }
             };
             const response = await fetch("http://localhost:3000/to-do", requestOptions);
             debugger;

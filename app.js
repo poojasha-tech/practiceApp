@@ -81,6 +81,9 @@ app.post("/signin",async(req,res)=>{
 
 
 app.get('/to-do', (req, res) => {
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const user = verifyJwt(token);
+    console.log(user)
     var data = [
         {title: 'Bring Milk', marked: true},
         {title: 'Homework finished', marked: false}
@@ -104,6 +107,14 @@ function hashPass(password) {
     return hash;
 }
 
+function verifyJwt(token) {
+    try {
+        var decoded = jwt.verify(token, secret);
+        return decoded.data;
+    } catch(err) {
+        return null
+    }
+}
 
 function getjwt(user) {
     var token = jwt.sign({
