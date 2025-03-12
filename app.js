@@ -81,8 +81,11 @@ app.post("/signin",async(req,res)=>{
 
 
 app.get('/to-do', (req, res) => {
-    //res.send("welcome to to-do page")
-    res.redirect("/page")
+    var data = [
+        {title: 'Bring Milk', marked: true},
+        {title: 'Homework finished', marked: false}
+    ]
+    res.send(data)
 })
 
 app.get('/page', (req, res) => {

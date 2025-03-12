@@ -50,21 +50,22 @@
             document.getElementById('todo-container').insertAdjacentHTML('beforeend', htmlString);
         }
 
-        async function init() {
+        async function getTodosFromBackend() {
             // todo: add request
-            // var data = fetch('http://localhost:5000/todo', requestObj)
-            var data = [
-                {title: 'Bring Milk', marked: true},
-                {title: 'Homework finished', marked: false}
-            ]
-
+            const requestOptions = {
+                method: "GET",
+                redirect: "follow"
+            };
+            const response = await fetch("http://localhost:3000/to-do", requestOptions);
+            debugger;
+            const data = await response.json();
             for(let i = 0; i < data.length; i++){
-                var todo = data[i]
+                const todo = data[i];
                 addTodoItem(todo.title)
             }
         }
 
-        init();
+        getTodosFromBackend();
     </script>
 
 </body>
