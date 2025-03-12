@@ -80,15 +80,13 @@ app.post("/signin",async(req,res)=>{
 
 
 
-app.get('/to-do', (req, res) => {
+app.get('/to-do', async (req, res) => {
     const token = req.headers.authorization.replace("Bearer ", "");
     const user = verifyJwt(token);
     console.log(user)
-    var data = [
-        {title: 'Bring Milk', marked: true},
-        {title: 'Homework finished', marked: false}
-    ]
-    res.send(data)
+    const todos = await prisma.todo.findMany({where:{username: user.username}})
+    console.log(todos)
+    res.send(todos)
 })
 
 app.get('/page', (req, res) => {
