@@ -83,7 +83,7 @@ app.post("/signin",async(req,res)=>{
 app.get('/to-do', async (req, res) => {
     const token = req.headers.authorization.replace("Bearer ", "");
     const user = verifyJwt(token);
-    console.log(user)
+    if(!user) return res.status(401).send("Unauthorized")
     const todos = await prisma.todo.findMany({where:{username: user.username}})
     console.log(todos)
     res.send(todos)
