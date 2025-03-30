@@ -33,10 +33,36 @@
     </div>
 
     <script>
-        function addTask(){
+        async function addItemToDb(todoText){
+            try{
+
+            const requestOptions = {
+                method: "POST",
+                redirect: "follow",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("AUTH_API"),
+                    "Content-Type": 'application/json'
+                },
+                body: JSON.stringify({ title: todoText })
+            };
+            const response = await fetch("http://localhost:3000/to-do", requestOptions);
+            if(response.status != 201){
+                alert('cannot add item')
+            }
+            else{
+                alert('item added')
+                window.location.reload();
+            }
+        }
+        catch(ex) {
+            console.error("Error while adding task", ex)
+        }
+
+        }
+        async function addTask(){
             const taskInput=document.getElementById("taskInput");
             if(taskInput.value.trim() === '') return
-            addTodoItem(taskInput.value)
+            await addItemToDb(taskInput.value)
             taskInput.value = ""
         }
         function addTodoItem(title) {
@@ -60,8 +86,13 @@
                 }
             };
             const response = await fetch("http://localhost:3000/to-do", requestOptions);
-            debugger;
             const data = await response.json();
+            // const todos: {
+            //     id: number;
+            //     username: string;
+            //     title: string;
+            //     marked: boolean;
+            // }[]
             for(let i = 0; i < data.length; i++){
                 const todo = data[i];
                 addTodoItem(todo.title)
