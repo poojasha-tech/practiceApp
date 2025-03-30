@@ -88,7 +88,30 @@ app.get('/to-do', async (req, res) => {
     console.log(todos)
     res.send(todos)
 })
+app.post('/to-do', async (req, res) => {
+    try{
 
+        const token = req.headers.authorization.replace("Bearer ", "");
+        const user = verifyJwt(token);
+        if(!user) return res.status(401).send("Unauthorized")
+        const todoFromFrontend = req.body;
+        if(!todoFromFrontend.title) return res.status(400).send("Title not present");
+        await prisma.todo.create({
+            data: {
+                username: user.username,
+                title: todoFromFrontend.title,
+                marked: false
+            }
+        })
+        return res.status(201).send()
+    }
+    catch(err) {
+        console.error("Could not save todo item", err)
+        return res.status(500).send("Could not save todo item")
+    }
+
+    
+})
 app.get('/page', (req, res) => {
     res.send("<h1>hye there from page</h1>")
 })
