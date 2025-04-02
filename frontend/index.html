@@ -28,7 +28,9 @@
 
 
         <div class="already-account">
-            <a href="signin.html"> <h3>Already have a account</h3></a>
+            <a href="signin.html">
+                <h3>Already have a account</h3>
+            </a>
         </div>
     </div>
 
@@ -38,8 +40,8 @@
 
 
     <script>
-        var button = document.querySelector('#signup-button');
-        button.addEventListener('click', async (e) => {
+
+        async function runSignUpHandler(e) {
             e.preventDefault();
             e.stopPropagation();
             try {
@@ -56,29 +58,33 @@
 
                 };
                 var response = await fetch('http://localhost:3000/signup', requestOptions);
-                debugger;
+
 
                 var data = await response.json();
-                if(data.err){
+                if (data.err) {
                     alert(data.err);
                 }
-                else if(data.token){
+                else if (data.token) {
                     document.cookie = `AUTH_API=${data.token}`;
                     localStorage.setItem("AUTH_API", data.token);
                     console.log(data);
-                    window.location.href="/to-do.html";
+                    window.location.href = "/to-do.html";
 
 
                 }
 
-            
-        
+
+
             }
             catch (err) {
                 console.error(err)
             }
 
-        })
+        }
+
+
+        var button = document.querySelector('#signup-button');
+        button.addEventListener('click', runSignUpHandler);
 
     </script>
 

@@ -17,3 +17,10 @@ model user{
   password String
 
 }
+
+model todo {
+  id Int @id@default(autoincrement())
+  username String
+  title String
+  marked Boolean
+}

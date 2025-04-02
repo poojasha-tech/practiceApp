@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>to-do</title>
+
+    <style>
+        .todo-item{
+            display: flex;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <h3>welcome to to do page</h3>
+    <div class="div">
+
+        <h2>To-DO List</h2>
+        <div>
+
+            <input type="text" id="taskInput" placeholder="Enter a task">
+            <button onclick="addTask()"> Add</button>
+            <ul id="taskList"></ul>
+
+            <div class="todo-container" id="todo-container">
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+    <script>
+
+
+        async function addTask(){
+            //alert("task added")
+            const taskInput=document.getElementById("taskInput");
+            if(taskInput.value.trim()==='') return
+            await addItemToDb(taskInput.value)
+            taskInput.value=""    // to clear input box
+        }
+
+        
+
+        async function addItemToDb(todoText){
+            try {
+                const requestOptions={
+                method: "POST",
+                redirect: "follow",
+                headers: {
+                     "Authorization": "Bearer " + localStorage.getItem("AUTH_API"),
+                     "Content-Type":'application/json'
+                 },
+                body:JSON.stringify({title:todoText})
+                };
+                const response=await fetch("http://localhost:3000/to-do",requestOptions);
+
+                if(response.status !=201){
+                    alert('cannot add item')
+                }
+                else{
+                    alert('item added')
+                    window.location.reload();
+                }
+            }    
+             catch (error) {
+                console.error("error while adding task",error)
+                
+            }
+        }
+            
+
+        
+        //display text on just frontend 
+        function addTodoItem(title){
+            const htmlString= `
+                <div class="todo-item">
+                    <div>${title}</div>    
+                    <button>Mark Done</button>
+                    <button>Delete</button>
+                </div>
+            `
+            document.getElementById('todo-container').insertAdjacentHTML('beforeend',htmlString);
+        }
+        
+
+        async function getTodosFromDb() {
+            const requestOptions={
+                method: "GET",
+                 redirect: "follow",
+                 redirect: "follow",
+                 headers: {
+                     "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
+                 }
+             };
+             const response = await fetch("http://localhost:3000/to-do", requestOptions);
+             const data = await response.json();
+             for(let i = 0; i < data.length; i++){
+                 const todo = data[i];
+                 addTodoItem(todo.title)
+             }
+         }
+        getTodosFromDb();
+    
+        </script>
+
+        
+
+            
+            
+            
+
+        
+        
+
+</body>
+
+</html>

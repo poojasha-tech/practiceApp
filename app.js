@@ -25,6 +25,7 @@ app.get("/helloworld", (req, res) => {
 app.post("/signup", async (req, res) => {
     try {
         const userdata = req.body
+
         const dataInDb = await prisma.user.findFirst({ where: { username: userdata.username } })
         if (dataInDb) {
             return res.status(409).send({ err: "username exists" })
@@ -45,10 +46,6 @@ app.post("/signup", async (req, res) => {
             const token = getjwt(newUser)
             console.log(token)
             return res.status(201).send({ token: token });
-
-
-
-
         }
     }
     catch (err) {
@@ -56,35 +53,99 @@ app.post("/signup", async (req, res) => {
         res.status(500).send();
 
     }
-
-
-
 })
 
 
-app.post("/signin",async(req,res)=>{
-    const user=req.body
-    const userInDb=await prisma.user.findFirst({where:{username:user.username}})
-    if(userInDb){
-        if (userInDb.password==hashPass(user.password)){
+app.post("/signin", async (req, res) => {
+    const user = req.body
+    const userInDb = await prisma.user.findFirst({ where: { username: user.username } })
+    if (userInDb) {
+        if (userInDb.password == hashPass(user.password)) {
             delete userInDb.password;
-            token=getjwt(userInDb)
-            return res.send({token:token})
+            token = getjwt(userInDb)
+            return res.send({ token: token })
             //return res.status(201).send("signed in")
         }
-
-
     }
     return res.status(401).send("username or password not found")
 })
 
 
 
-app.get('/to-do', (req, res) => {
+app.get('/to-do', async (req, res) => {
     //res.send("welcome to to-do page")
-    res.redirect("/page")
+    const token = req.headers.authorization?.replace("Bearer ", "");
+    const user = verifyJwt(token);
+    if (!user)
+        return res.status(401).send("unauthorised!");
+
+    console.log(user)
+
+    /*var data=[
+        {title:'bring Milk',marked:true},
+        {title:'Homework finished',marked:false}
+    ]
+    res.send(data)*/
+
+    const todos = await prisma.todo.findMany({ where: { username: user.username } })
+    console.log(todos)
+    res.send(todos)
+
 })
 
+app.post('/to-do', async (req, res) => {
+    try {
+        const token = req.headers.authorization.replace("Bearer ", "");
+        const user = verifyJwt(token);
+
+        if (!user)
+            return res.status(401).send("unauthorised!")
+
+        const todoFromFrontend = req.body;
+        if (!todoFromFrontend.title)
+            return res.status(400).send("title not present");
+
+        await prisma.todo.create({
+            data: {
+                username: user.username,
+                title: todoFromFrontend.title,
+                marked: false
+            }
+        })
+
+        return res.status(201).send()
+    }
+    catch (error) {
+        console.error("couldnot save todo item", error)
+        return res.status(500).send("could not save todo item")
+
+    }
+})
+
+
+app.delete('/to-do/:id', async (req, res) => {
+    try {
+
+        const token = req.headers.authorization.replace("Bearer ", "");
+        const user = verifyJwt(token);
+        if (!user)
+            return res.status(401).send("unauthorised!")
+
+        const id = req.params.id;
+        const deletedItem = await prisma.todo.delete({ 
+            where: { 
+                id: Number(id), 
+                username: user.username 
+            } 
+        });
+        return res.status(204).send("item deleted");
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send();
+    }
+
+})
 app.get('/page', (req, res) => {
     res.send("<h1>hye there from page</h1>")
 })
@@ -109,4 +170,14 @@ function getjwt(user) {
         data: user
     }, secret);
     return token;
+}
+
+function verifyJwt(token) {
+    try {
+        var decoded = jwt.verify(token, secret);
+        return decoded.data;
+
+    } catch (error) {
+        return null
+    }
 }
