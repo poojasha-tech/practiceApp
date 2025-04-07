@@ -132,11 +132,11 @@ app.delete('/to-do/:id', async (req, res) => {
             return res.status(401).send("unauthorised!")
 
         const id = req.params.id;
-        const deletedItem = await prisma.todo.delete({ 
-            where: { 
-                id: Number(id), 
-                username: user.username 
-            } 
+        const deletedItem = await prisma.todo.delete({
+            where: {
+                id: Number(id),
+                username: user.username
+            }
         });
         return res.status(204).send("item deleted");
 
@@ -144,6 +144,46 @@ app.delete('/to-do/:id', async (req, res) => {
         console.error(error);
         return res.status(500).send();
     }
+
+})
+
+app.put('/to-do/mark/:id', async (req, res) => {
+    try {
+
+        const token = req.headers.authorization.replace("Bearer ", "");
+        const user = verifyJwt(token);
+        if (!user)
+            return res.status(401).send("unauthorised!")
+        const id = req.params.id;
+        const markTodo = await prisma.todo.findUnique({
+            where: {
+                id: Number(id),
+                username: user.username
+            }
+        });
+
+        const updatedItem = await prisma.todo.update({
+            where: {
+                id: Number(id),
+                username: user.username
+            },
+
+            data: {
+                marked: markTodo.marked?false:true
+
+            }
+        });
+        return res.status(201).send("todo is " + updatedItem.marked);
+
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).send("internal error!");
+
+    }
+
+
+
 
 })
 app.get('/page', (req, res) => {
