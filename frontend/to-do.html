@@ -7,12 +7,11 @@
     <title>to-do</title>
 
     <style>
-        .todo-item{
+        .todo-item {
             display: flex;
             margin-bottom: 20px;
             gap: 20px;
         }
-
     </style>
 </head>
 
@@ -40,86 +39,111 @@
     <script>
 
 
-        async function addTask(){
+        async function addTask() {
             //alert("task added")
-            const taskInput=document.getElementById("taskInput");
-            if(taskInput.value.trim()==='') return
+            const taskInput = document.getElementById("taskInput");
+            if (taskInput.value.trim() === '') return
             await addItemToDb(taskInput.value)
-            taskInput.value=""    // to clear input box
+            taskInput.value = ""    // to clear input box
         }
 
-        
 
-        async function addItemToDb(todoText){
+
+        async function addItemToDb(todoText) {
             try {
-                const requestOptions={
-                method: "POST",
-                redirect: "follow",
-                headers: {
-                     "Authorization": "Bearer " + localStorage.getItem("AUTH_API"),
-                     "Content-Type":'application/json'
-                 },
-                body:JSON.stringify({title:todoText})
+                const requestOptions = {
+                    method: "POST",
+                    redirect: "follow",
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("AUTH_API"),
+                        "Content-Type": 'application/json'
+                    },
+                    body: JSON.stringify({ title: todoText })
                 };
-                const response=await fetch("http://localhost:3000/to-do",requestOptions);
+                const response = await fetch("http://localhost:3000/to-do", requestOptions);
 
-                if(response.status !=201){
+                if (response.status != 201) {
                     alert('cannot add item')
                 }
-                else{
+                else {
                     alert('item added')
                     window.location.reload();
                 }
-            }    
-             catch (error) {
-                console.error("error while adding task",error)
-                
+            }
+            catch (error) {
+                console.error("error while adding task", error)
+
             }
         }
-            
 
-        
+
+
         //display text on just frontend 
-        function addTodoItem(title){
-            const htmlString= `
+        function addTodoItem(title, id) {
+            const htmlString = /*html*/`
                 <div class="todo-item">
                     <div>${title}</div>    
                     <button>Mark Done</button>
-                    <button>Delete</button>
+                    <button data-id ="${id}"  onclick="deleteToDo(this)">Delete</button>
                 </div>
             `
-            document.getElementById('todo-container').insertAdjacentHTML('beforeend',htmlString);
+            document.getElementById('todo-container').insertAdjacentHTML('beforeend', htmlString);
         }
-        
+
+        async function deleteToDo(deleteButton) {
+            const id = deleteButton.getAttribute('data-id');
+            debugger;
+            const requestOptions = {
+                method: "DELETE",
+                redirect: "follow",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
+                }
+            };
+            alert("deleting!")
+            try {
+
+                const response = await fetch("http://localhost:3000/to-do/" + id, requestOptions);
+                if (response.status == 204) {
+                    window.location.reload();
+                }
+                else {
+                    alert("coundn't delete item!")
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+        }
 
         async function getTodosFromDb() {
-            const requestOptions={
+            const requestOptions = {
                 method: "GET",
-                 redirect: "follow",
-                 redirect: "follow",
-                 headers: {
-                     "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
-                 }
-             };
-             const response = await fetch("http://localhost:3000/to-do", requestOptions);
-             const data = await response.json();
-             for(let i = 0; i < data.length; i++){
-                 const todo = data[i];
-                 addTodoItem(todo.title)
-             }
-         }
+                redirect: "follow",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
+                }
+            };
+            const response = await fetch("http://localhost:3000/to-do", requestOptions);
+            const data = await response.json();
+
+            for (let i = 0; i < data.length; i++) {
+                const todo = data[i];
+                addTodoItem(todo.title, todo.id)
+            }
+        }
         getTodosFromDb();
-    
-        </script>
 
-        
+    </script>
 
-            
-            
-            
 
-        
-        
+
+
+
+
+
+
+
 
 </body>
 
