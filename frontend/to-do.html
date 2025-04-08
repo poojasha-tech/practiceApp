@@ -24,7 +24,9 @@
 
             <input type="text" id="taskInput" placeholder="Enter a task">
             <button onclick="addTask()"> Add</button>
-            <ul id="taskList"></ul>
+            <ul id="taskList">
+                
+            </ul>
 
             <div class="todo-container" id="todo-container">
 
@@ -79,11 +81,11 @@
 
 
         //display text on just frontend 
-        function addTodoItem(title, id) {
+        function addTodoItem(title, id, marked) {
             const htmlString = /*html*/`
                 <div class="todo-item">
-                    <div>${title}</div>    
-                    <button>Mark Done</button>
+                    <div>${marked ? "<del>" + title + "</del>" : title}</div>    
+                    <button data-id="${id}" onclick="markTodo(this)">${marked ? "unmark" : "mark"}</button>
                     <button data-id ="${id}"  onclick="deleteToDo(this)">Delete</button>
                 </div>
             `
@@ -116,6 +118,33 @@
 
         }
 
+
+
+        async function markTodo(markButton) {
+            const id = markButton.getAttribute('data-id');
+            debugger;
+            const requestOptions = {
+                method: "PUT",
+                redirect: "follow",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
+                }
+            };
+            try {
+
+                const response = await fetch("http://localhost:3000/to-do/mark/" + id, requestOptions);
+                if (response.status == 201) {
+                    window.location.reload();
+                }
+                else {
+                    alert("coundn't mark item!")
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+        }
+
         async function getTodosFromDb() {
             const requestOptions = {
                 method: "GET",
@@ -129,7 +158,7 @@
 
             for (let i = 0; i < data.length; i++) {
                 const todo = data[i];
-                addTodoItem(todo.title, todo.id)
+                addTodoItem(todo.title, todo.id, todo.marked)
             }
         }
         getTodosFromDb();

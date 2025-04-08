@@ -113,7 +113,7 @@ app.post('/to-do', async (req, res) => {
             }
         })
 
-        return res.status(201).send()
+        return res.status(201).send(todoFromFrontend.title)
     }
     catch (error) {
         console.error("couldnot save todo item", error)
@@ -123,7 +123,7 @@ app.post('/to-do', async (req, res) => {
 })
 
 
-app.delete('/to-do/:id', async (req, res) => {
+app.delete('/to-do/:todoId', async (req, res) => {
     try {
 
         const token = req.headers.authorization.replace("Bearer ", "");
@@ -131,14 +131,14 @@ app.delete('/to-do/:id', async (req, res) => {
         if (!user)
             return res.status(401).send("unauthorised!")
 
-        const id = req.params.id;
+        const id = req.params.todoId;
         const deletedItem = await prisma.todo.delete({
             where: {
                 id: Number(id),
                 username: user.username
             }
         });
-        return res.status(204).send("item deleted");
+        return res.status(200).send("item deleted");
 
     } catch (error) {
         console.error(error);
