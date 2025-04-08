@@ -8,6 +8,9 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2"
   },
+  "scripts": {
+    "dev": "node app.js"
+  },
   "devDependencies": {
     
     "prisma": "^6.3.1"

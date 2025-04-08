@@ -202,6 +202,14 @@ function hashPass(password) {
     return hash;
 }
 
+function verifyJwt(token) {
+    try {
+        var decoded = jwt.verify(token, secret);
+        return decoded.data;
+    } catch(err) {
+        return null
+    }
+}
 
 function getjwt(user) {
     var token = jwt.sign({
