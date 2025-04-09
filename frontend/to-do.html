@@ -5,13 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>to-do</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
 
     <style>
-        .todo-item {
-            display: flex;
-            margin-bottom: 20px;
-            gap: 20px;
+        body{
+            font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
         }
+        .todo-container{
+            /* border: 1px solid red; */
+            max-width: 450px;
+            margin-inline: auto;
+        }
+        .todo-item {
+            font-family: "Quicksand", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+            /* |       70%     | 15% | 15% | */
+            display: grid;
+            grid-template-columns: 66% 13% 13%;
+            margin-bottom: 20px;
+            gap: 4%;
+            border-radius: 6px;
+            padding: 7px;
+            background-color: rgba(102, 51, 153, 0.45);
+            box-shadow: 0 0 10px rgba(102, 51, 153, 0.6);
+        }
+        .todo-item[is-marked='true']{
+            opacity: .8;
+        }
+        
+        .todo-item[is-marked='true'] .todo-title {
+            text-decoration: line-through;
+        }
+
+        .todo-mark-btn {
+            background-color: rgba(102, 51, 153, 0.3);
+            border: 1px solid rgba(102, 51, 153, 0.3);
+            border-radius: 6px;
+        }
+
+        .todo-mark-btn:hover {
+            background-color: rgba(102, 51, 153, 0.4);
+            cursor: pointer;
+        }
+
     </style>
 </head>
 
@@ -25,17 +65,11 @@
             <input type="text" id="taskInput" placeholder="Enter a task">
             <button onclick="addTask()"> Add</button>
             <ul id="taskList">
-                
             </ul>
-
             <div class="todo-container" id="todo-container">
-
+                <!-- To-do Items go here-->
             </div>
-
         </div>
-
-
-
     </div>
 
     <script>
@@ -83,10 +117,10 @@
         //display text on just frontend 
         function addTodoItem(title, id, marked) {
             const htmlString = /*html*/`
-                <div class="todo-item">
-                    <div>${marked ? "<del>" + title + "</del>" : title}</div>    
-                    <button data-id="${id}" onclick="markTodo(this)">${marked ? "unmark" : "mark"}</button>
-                    <button data-id ="${id}"  onclick="deleteToDo(this)">Delete</button>
+                <div class="todo-item" is-marked="${marked}">
+                    <div class="todo-title">${title}</div>    
+                    <button class="todo-mark-btn" data-id="${id}" onclick="markTodo(this)">${marked ? "unmark" : "mark"}</button>
+                    <button class="todo-delete-btn" data-id ="${id}"  onclick="deleteToDo(this)">Delete</button>
                 </div>
             `
             document.getElementById('todo-container').insertAdjacentHTML('beforeend', htmlString);
@@ -146,16 +180,22 @@
         }
 
         async function getTodosFromDb() {
-            const requestOptions = {
-                method: "GET",
-                redirect: "follow",
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
-                }
-            };
-            const response = await fetch("http://localhost:3000/to-do", requestOptions);
-            const data = await response.json();
-
+            // const requestOptions = {
+            //     method: "GET",
+            //     redirect: "follow",
+            //     headers: {
+            //         "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
+            //     }
+            // };
+            // const response = await fetch("http://localhost:3000/to-do", requestOptions);
+            // const data = await response.json();
+            data = [
+                {id:1, title: "Get coffee", marked: false},
+                {id:1, title: "German Class Tomorrow", marked: true},
+                {id:1, title: "CSS review", marked: false},
+                {id:1, title: "Reply to Meilina for Contract", marked: false},
+                {id:1, title: "Interview with sub tenent", marked: false}
+            ]
             for (let i = 0; i < data.length; i++) {
                 const todo = data[i];
                 addTodoItem(todo.title, todo.id, todo.marked)
