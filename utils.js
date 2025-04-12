@@ -1,3 +1,8 @@
+const crypto = require("crypto");
+const secret = "mysecret";
+const jwt = require("jsonwebtoken")
+
+
 function hashPass(password) {
     const hash = crypto.createHmac('md5', secret) // Using HMAC with MD5 and a secret key
         .update(password) // Update with the data to hash

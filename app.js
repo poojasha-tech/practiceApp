@@ -3,15 +3,7 @@ const app = express();
 const port = 3000;
 const cors = require("cors");
 app.use(cors());
-
-const prisma = require("./prisma/db")
-
-
-const crypto = require("crypto");
-const secret = "mysecret";
-
-
-const jwt = require("jsonwebtoken");
+const verifyUserToken = require("./middleware/verifyUserToken");
 
 
 app.use(express.json())
@@ -19,14 +11,19 @@ app.use(express.json())
 app.get("/helloworld", (req, res) => {
     return res.send("hello world!")
 })
-
-const authRouter = require('./controllers/auth')
-app.use(authRouter)
-const todoRouter = require('./controllers/todo')
-app.use(todoRouter)
-app.get('/page', (req, res) => {
+app.get('/helloworld', (req, res) => {
     res.send("<h1>hye there from page</h1>")
 })
+// this is pipeline
+app.use(require('./controllers/auth'))
+//    |
+//    |
+app.use(verifyUserToken)
+//    |
+//    |
+app.use('/to-do', require('./controllers/todo'))
+
+
 
 app.listen(port, () => {
     console.log(`app listening on port ${port}!`)

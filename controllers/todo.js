@@ -1,15 +1,9 @@
 const express = require('express');
-const { verifyJwt } = require('../utils');
+const prisma = require('../prisma/db')
 const router = express.Router()
-router.get('/to-do/test', (req, res) => res.send("returned from inside the todo router"))
-router.get('/to-do', async (req, res) => {
-    //res.send("welcome to to-do page")
-    const token = req.headers.authorization?.replace("Bearer ", "");
-    const user = verifyJwt(token);
-    if (!user)
-        return res.status(401).send("unauthorised!");
-
-    console.log(user)
+router.get('/test', (req, res) => res.send("returned from inside the todo router"))
+router.get('/', async (req, res) => {
+    const user = req.user;
 
     /*var data=[
         {title:'bring Milk',marked:true},
@@ -23,13 +17,9 @@ router.get('/to-do', async (req, res) => {
 
 })
 
-router.post('/to-do', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        const token = req.headers.authorization.replace("Bearer ", "");
-        const user = verifyJwt(token);
-
-        if (!user)
-            return res.status(401).send("unauthorised!")
+        const user = req.user
 
         const todoFromFrontend = req.body;
         if (!todoFromFrontend.title)
@@ -53,13 +43,9 @@ router.post('/to-do', async (req, res) => {
 })
 
 
-router.delete('/to-do/:todoId', async (req, res) => {
+router.delete('/:todoId', async (req, res) => {
     try {
-
-        const token = req.headers.authorization.replace("Bearer ", "");
-        const user = verifyJwt(token);
-        if (!user)
-            return res.status(401).send("unauthorised!")
+        const user = req.user
 
         const id = req.params.todoId;
         const deletedItem = await prisma.todo.delete({
@@ -77,13 +63,10 @@ router.delete('/to-do/:todoId', async (req, res) => {
 
 })
 
-router.put('/to-do/mark/:id', async (req, res) => {
+router.put('/mark/:id', async (req, res) => {
     try {
-
-        const token = req.headers.authorization.replace("Bearer ", "");
-        const user = verifyJwt(token);
-        if (!user)
-            return res.status(401).send("unauthorised!")
+        
+        const user = req.user
         const id = req.params.id;
         const markTodo = await prisma.todo.findUnique({
             where: {
