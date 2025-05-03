@@ -36,8 +36,17 @@ app.use('/todo',require('./controllers/todo'));
 app.get('/page', (req, res) => {
     res.send("<h1>hye there from page</h1>")
 })
+// this is pipeline
+app.use(require('./controllers/auth'))
+//    |
+//    |
+app.use(verifyUserToken)
+//    |
+//    |
+app.use('/to-do', require('./controllers/todo'))
+
+
 
 app.listen(port, () => {
     console.log(`app listening on port ${port}!`)
 })
-

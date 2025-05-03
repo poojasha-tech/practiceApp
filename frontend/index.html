@@ -7,6 +7,64 @@
     <title>practice</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<style>
+    body{
+        font-family: Arial, Helvetica, sans-serif;
+        box-sizing: border-box;
+        color: rebeccapurple;
+    }
+    .form-container{
+        /* border: 1px solid red; */
+    }
+    .form-container form {
+        width: 350px;
+        /* border: 2px dashed blue; */
+        /* margin-left: auto; margin-left: auto; */
+        margin-inline: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    form button{
+        margin-top: 10px;
+        color: rebeccapurple;
+        border: 2px solid rebeccapurple;
+        border-radius: 6px;
+        height: 27px;
+        font-weight: 700;
+        background-color: transparent;
+        /* background-color: rgba(102, 51, 153, 0.652); */
+    }
+    .already-account {
+        font-size: small;
+    }
+    form button:hover{
+        background-color: rgba(102, 51, 153, 0.652);
+        color: white;
+        cursor: pointer;
+    }
+
+    form > * {
+        /* border: 1px solid pink; */
+    }
+
+    .form-container form input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 2px solid rebeccapurple;
+        height: 27px;
+        margin-top: 5px;
+        border-radius: 6px;
+    }
+    form h2 {
+        text-align: center;
+    }
+
+</style>
+
+
+
 
 <style>
     body{
@@ -149,17 +207,11 @@
                     window.location.href = "/to-do.html";
 
                 }
-
-
-
             }
             catch (err) {
                 console.error(err)
             }
-
         }
-
-
         var button = document.querySelector('#signup-button');
         button.addEventListener('click', runSignUpHandler);
 

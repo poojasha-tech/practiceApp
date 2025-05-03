@@ -21,7 +21,6 @@ router.post("/signup", async (req, res) => {
 
                 }
 
-
             })
 
             newUser.password == null;

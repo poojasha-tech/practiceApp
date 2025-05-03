@@ -1,6 +1,6 @@
 {
   "scripts":{
-    "dev":"nodemon app.js"
+    "dev":"npx nodemon app.js"
   },
   "type": "commonjs",
   "dependencies": {
@@ -10,7 +10,6 @@
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
-    
     "prisma": "^6.3.1"
   }
 }
