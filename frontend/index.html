@@ -8,37 +8,115 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
+<style>
+    body{
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        box-sizing: border-box;
+        color: rebeccapurple;
+        display: flex;
+        border: 5px solid red;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form-container{
+        border: 5px solid rgba(255, 192, 203, 0.764);
+        background-color: rgba(255, 192, 203, 0.794);
+        display: inline-block;
+        padding:20px; 
+        border-radius: 8px;
+        
+    }
+
+    .form-container form{
+        width: 300px;
+        
+        display: flex;
+        flex-direction:column;
+        gap: 30px;
+    }
+
+    form button{
+        margin-top: 10px;
+        color: rebeccapurple;
+        border: 2px solid rebeccapurple;
+        border-radius: 5px;
+        height: 30px;
+        font-weight: 700;
+        background-color: rgba(102, 51, 153, 0.304);
+    }
+
+    .already-account{
+        font-size: medium;
+        margin-top: 15px;
+        text-align: center;
+    }
+    .already-account:hover{
+        font-size: 1.2rem;
+        color:rgba(102, 51, 153, 0.805) ;
+        transition: all 0.3s ease;
+    }
+    
+
+    form button:hover{
+        background-color: rebeccapurple;
+        color: white;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+    
+    /* You can change the whole form of form !
+    form >*{
+        /*border: 1px solid red;
+        }
+        */
+    
+
+    .form-container form input{
+        width: 100%;
+        box-sizing: border-box;
+        border: 2px solid rgba(102, 51, 153, 0.744);
+        background-color: rgba(102, 51, 153, 0.106);
+        height: 27px;
+        margin-top: 12px;
+        border-radius: 7px;
+
+    }
+
+    form h2{
+        text-align: center;
+        
+    }
+
+</style>
+
 <body>
     <div class="form-container">
 
         <form id="form">
-            <h3>Signup</h3>
+            <h2>Signup</h2>
             <label>
-                <h4>username</h4>
+                username
                 <input id="signup-username" type="text">
             </label>
 
             <label>
-                <h4>password</h4>
+                password
                 <input id="signup-password" type="password">
-            </label> <br> <br>
+            </label>
 
             <button id="signup-button">Signup</button>
-        </form><br>
+        </form>
 
 
         <div class="already-account">
-            <a href="signin.html">
-                <h3>Already have a account</h3>
+            <a href="signin.html" class="already-account">
+                Already have a account
             </a>
         </div>
     </div>
-
-
-
-
-
-
     <script>
 
         async function runSignUpHandler(e) {

@@ -7,34 +7,150 @@
     <title>to-do</title>
 
     <style>
-        .todo-item {
+        body {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+
+
+
+        }
+
+        .main-container {
+            text-align: center;
+            border: 5px solid red;
+            background-color: rgba(255, 192, 203, 0.409);
+        }
+
+        .main-container div input {
+            width: 100%;
+        }
+
+        .main-container div button {
+            display: inline;
+        }
+
+        .todo-container {
+
+            max-width: 800px;
+            margin-inline: auto;
+
+        }
+
+        .input-sec {
+            display: grid;
+            grid-template-columns: 1fr 50px;
+            margin-bottom: 40px;
+
+
+        }
+
+        .input-sec input {
+            height: 35px;
+            background-color: rgba(0, 255, 255, 0.497);
+            border: 2px solid black;
+            font-size: medium;
+        }
+
+        .input-sec .add-btn {
+            border: 2px solid black;
+            background-color: aqua
+        }
+
+        .todo-item {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 600;
+            font-style: normal;
+            box-sizing: border-box;
+            display: grid;
+            /* 70% 15% 15%*/
+            grid-template-columns: 52% 20% 20%;
             margin-bottom: 20px;
-            gap: 20px;
+            gap:4%;
+            border-radius: 6px;
+            padding: 10px;
+            background-color: pink;
+            box-shadow: 0 0 10px pink;
+            font-size: medium;
+
+
+        }
+
+        .todo-item[is-marked='true'] .todo-title {
+            text-decoration: line-through;
+        }
+
+        .todo-title{
+            display: flex;
+            /* flex below property default */
+            justify-content: flex-start; 
+            align-items: center;
+            padding-left: 2px;
+        }
+
+        .todo-mark-btn {
+            background-color: rgba(0, 128, 0, 0.838);
+            border: 1px solid green;
+            border-radius: 6px;
+            width: 70px;
+            padding: 6px;
+            margin-right: 100px;
+            text-size-adjust: auto;
+            font-size: medium;
+
+
+        }
+
+        .todo-mark-btn:hover {
+            background-color: rgb(0, 128, 0);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .todo-delete-btn {
+            background-color: rgba(255, 0, 0, 0.617);
+            border: 1px solid red;
+            border-radius: 6px;
+            padding: 6px;
+            width: 80px;
+            font-size: medium;
+            text-size-adjust: auto;
+
+
+        }
+
+        .todo-delete-btn:hover {
+            background-color: red;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
         }
     </style>
 </head>
 
-<body>
-    <h3>welcome to to do page</h3>
+<body class="main-container">
+
     <div class="div">
+        <h3>welcome to to do page</h3>
 
-        <h2>To-DO List</h2>
+        <h2 class="todo-tag">To-DO List</h2>
         <div>
+            <div class="input-sec">
+                <input type="text" id="taskInput" placeholder="Enter a task">
 
-            <input type="text" id="taskInput" placeholder="Enter a task">
-            <button onclick="addTask()"> Add</button>
-            <ul id="taskList">
-                
-            </ul>
+                <button onclick="addTask()" class="add-btn"> Add</button>
+            </div>
 
             <div class="todo-container" id="todo-container">
+                <!-- to-do items go here  -->
 
             </div>
 
         </div>
-
-
 
     </div>
 
@@ -62,7 +178,7 @@
                     },
                     body: JSON.stringify({ title: todoText })
                 };
-                const response = await fetch("http://localhost:3000/to-do", requestOptions);
+                const response = await fetch("http://localhost:3000/todo", requestOptions);
 
                 if (response.status != 201) {
                     alert('cannot add item')
@@ -83,10 +199,10 @@
         //display text on just frontend 
         function addTodoItem(title, id, marked) {
             const htmlString = /*html*/`
-                <div class="todo-item">
-                    <div>${marked ? "<del>" + title + "</del>" : title}</div>    
-                    <button data-id="${id}" onclick="markTodo(this)">${marked ? "unmark" : "mark"}</button>
-                    <button data-id ="${id}"  onclick="deleteToDo(this)">Delete</button>
+                <div class="todo-item" is-marked=${marked}>
+                    <div class="todo-title"> ${title}</div>    
+                    <button class="todo-mark-btn" data-id="${id}" onclick="markTodo(this)">${marked ? "unmark" : "mark"}</button>
+                    <button class="todo-delete-btn"data-id ="${id}"  onclick="deleteToDo(this)">Delete</button>
                 </div>
             `
             document.getElementById('todo-container').insertAdjacentHTML('beforeend', htmlString);
@@ -94,7 +210,6 @@
 
         async function deleteToDo(deleteButton) {
             const id = deleteButton.getAttribute('data-id');
-            debugger;
             const requestOptions = {
                 method: "DELETE",
                 redirect: "follow",
@@ -105,8 +220,8 @@
             alert("deleting!")
             try {
 
-                const response = await fetch("http://localhost:3000/to-do/" + id, requestOptions);
-                if (response.status == 204) {
+                const response = await fetch("http://localhost:3000/todo/" + id, requestOptions);
+                if (response.status == 200) {
                     window.location.reload();
                 }
                 else {
@@ -132,7 +247,7 @@
             };
             try {
 
-                const response = await fetch("http://localhost:3000/to-do/mark/" + id, requestOptions);
+                const response = await fetch("http://localhost:3000/todo/mark/" + id, requestOptions);
                 if (response.status == 201) {
                     window.location.reload();
                 }
@@ -145,7 +260,17 @@
 
         }
 
+
+        function checkToken(){
+            debugger;
+            const token=localStorage.getItem("AUTH_API")
+            if(token==null || token==undefined||token==""){
+                window.location.href="/"
+            }
+        }
+
         async function getTodosFromDb() {
+            checkToken()
             const requestOptions = {
                 method: "GET",
                 redirect: "follow",
@@ -153,7 +278,7 @@
                     "Authorization": "Bearer " + localStorage.getItem("AUTH_API")
                 }
             };
-            const response = await fetch("http://localhost:3000/to-do", requestOptions);
+            const response = await fetch("http://localhost:3000/todo", requestOptions);
             const data = await response.json();
 
             for (let i = 0; i < data.length; i++) {
@@ -164,15 +289,6 @@
         getTodosFromDb();
 
     </script>
-
-
-
-
-
-
-
-
-
 
 </body>
 
